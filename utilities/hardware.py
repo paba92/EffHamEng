@@ -283,7 +283,6 @@ class QuantumHardware:
                                  [a[row, col], mat[1][2], mat[1][0]],  # (1,3,5)
                                  [a[row, col], mat[2][1], mat[1][0]],  # (1,4,5)
                                  [a[row, col], mat[1][0], mat[0][1]]]  # (1,5,2)
-                        pass
                         for i in temps:
                             if not -1 in i:
                                 for j in all_comb_N3:
@@ -408,13 +407,13 @@ class QuantumHardware:
 
         :param include_non_commuting_interactions: True: Also include non-commuting interactions and set corresponding J to zero.
         """
-        self._pauli_string_list = self.int2base(self.Ham_k_int(2), 2)
+        self._pauli_string_list = self.int2base(self.Ham_k_int(2), 2)*3
         nz_idx = np.nonzero(self._pauli_string_list)
         external = cou.Quadratic1D(mw2=1.)  # Assume quadratic trap potential
         Hinv = cou.coupling_matrix(self._n, external)  # Calculate the inverse Hessian
         self._J = [Hinv[i[0],i[1]]for i in np.reshape(nz_idx[1],(int(len(nz_idx[1])/2),2))]
         if include_non_commuting_interactions:
-            all_comb = np.array(list(itertools.product(range(1, 4), repeat=2)))[1:]
+            all_comb = np.array(list(itertools.product(range(1, 4), repeat=2)))[:-1]
             res = np.empty((0,self._n)).astype(int)
             for i in self._pauli_string_list:
                 nz = np.nonzero(i)[0]
